@@ -55,10 +55,26 @@ def use_database(database_name):
     print("ERROR : Unknown database " + database_name)
     return None
 
+def show_tables(current_database_name):
+    global data
+    database = data.joinpath(current_database_name)
+    tables_str = "Tables in " + current_database_name + " :\n"
+    count = 0
+    for table in database.iterdir():
+        tables_str += table.name.split(".")[0] + "\n"
+        count += 1
+    tables_str += str(count) + " rows in set"
+    print(tables_str)
+
+def drop_table(current_database_name,table_name):
+    global data
+    table = data.joinpath(current_database_name,table_name + ".csv")
+    if table.exists():
+        table.unlink()
+    else:
+        print("ERROR : Unknown table '%s.%s'" % (current_database_name,table_name))
+
 def create_table(current_database_name,table_name,parms):
-    if current_database_name == None:
-        print("ERROR : No database selected")
-        return
     global data
     table = data.joinpath(current_database_name,table_name + ".csv")
     table.touch()
@@ -70,8 +86,40 @@ def create_table(current_database_name,table_name,parms):
     for item in parm_list:
         keys.append(item.split(" ")[0])
 
-    with open(table,"a",newline="") as csvfile:
+    with open(table,"w",newline="") as csvfile:
         writer = csv.writer(csvfile,delimiter="|")
         writer.writerow(keys)
 
-    
+def alter_table_addcol(current_database_name,table_name,col_name,parm):
+    global data
+    table = data.joinpath(current_database_name,table_name+".csv")
+    if table.exists():
+        reader = csv.reader(table.open("r",newline=""),delimiter="|")
+        firstrow = next(reader)
+        firstrow.append(col_name)
+         # print(firstrow)
+        with open(table,"w",newline="") as csvfile:
+            writer = csv.writer(csvfile,delimiter="|")
+            writer.writerow(firstrow)
+            for i in reader:
+                writer.writerow(i)
+
+    else:
+        print("ERROR : Unknown table '%s.%s'" % (current_database_name,table_name))
+
+def describe_table(current_database_name,table_name):
+    table = data.joinpath(current_database_name,table_name+".csv")
+    if not table.exists():
+        print("ERROR : Unknown table '%s.%s'" % (current_database_name,table_name))
+        return
+    describe_table_str = "Field:\n"
+    with open(table,"r",newline="") as csvfile:
+        reader = csv.reader(csvfile,delimiter="|")
+        firstrow = next(reader)
+        for i in firstrow:
+            describe_table_str += i + "\n"
+
+    print(describe_table_str)
+
+
+
