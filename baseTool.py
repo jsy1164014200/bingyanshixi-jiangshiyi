@@ -14,6 +14,7 @@ def create_database(database_name):
     if database.exists() and database.is_file():
         return
     database.mkdir()
+    print("OPERATOR SUCCESS")
 
 def drop_database(database_name):
     """
@@ -30,6 +31,7 @@ def drop_database(database_name):
         if child is not None:
             child.unlink()
     database.rmdir()
+    print("OPERATOR SUCCESS")
     # TODO 修改输出 语句
     #print("Query OK, 12 rows affected (0.22 sec)")
 
@@ -46,6 +48,7 @@ def show_databases():
     count = len([child for child in data.iterdir() if child.is_dir()])        
     databases_str += str(count) + " rows in set"
     print(databases_str)
+    print("OPERATOR SUCCESS")
 
 def use_database(database_name):
     global data
@@ -65,12 +68,14 @@ def show_tables(current_database_name):
         count += 1
     tables_str += str(count) + " rows in set"
     print(tables_str)
+    print("OPERATOR SUCCESS")
 
 def drop_table(current_database_name,table_name):
     global data
     table = data.joinpath(current_database_name,table_name + ".csv")
     if table.exists():
         table.unlink()
+        print("OPERATOR SUCCESS")
     else:
         print("ERROR : Unknown table '%s.%s'" % (current_database_name,table_name))
 
@@ -89,6 +94,8 @@ def create_table(current_database_name,table_name,parms):
     with open(table,"w",newline="") as csvfile:
         writer = csv.writer(csvfile,delimiter="|")
         writer.writerow(keys)
+    
+    print("OPERATOR SUCCESS")
 
 def alter_table_addcol(current_database_name,table_name,col_name,parm):
     global data
@@ -104,6 +111,7 @@ def alter_table_addcol(current_database_name,table_name,col_name,parm):
             for i in reader:
                 writer.writerow(i)
 
+        print("OPERATOR SUCCESS")
     else:
         print("ERROR : Unknown table '%s.%s'" % (current_database_name,table_name))
 
@@ -120,6 +128,7 @@ def describe_table(current_database_name,table_name):
             describe_table_str += i + "\n"
 
     print(describe_table_str)
+    print("OPERATOR SUCCESS")
 
 
 

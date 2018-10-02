@@ -6,74 +6,10 @@
 from pathlib import Path
 import csv
 import re
-
+from common import print_infos,check_item_condition
 
 base_dir = Path(__file__).cwd()
 data = base_dir.joinpath("data")
-
-
-
-def print_infos(infos,item):
-    """
-        infos: 一个字符串，表示要打印的 fields
-        item : 一个有序字典
-        更与信息打印出 结果
-    """
-    if infos == "*":
-        for i in item:
-            print(i + ":" + item[i],end=" ")
-        print("")
-    else:
-        parms = infos.split(",")
-        for parm in parms:
-            print(parm + ":" + item[parm],end=" ")
-        print("")
-
-def check_item_condition(item,condition):
-    """
-        item : 一个有序字典
-        condition : 字符串条件
-        用于核查一个 item 是否符合该条件
-    """
-    is_between_and = re.compile(r"(\w+) between (\w+) and (\w+)",re.IGNORECASE).match(condition)
-    # id = 1
-    is_single_condition = re.compile(r"([\w\s]+)([=<>]+)([\w\s]+)",re.IGNORECASE).match(condition)
-
-    if is_between_and:
-        parm = is_between_and.group(1)
-        begin = int(is_between_and.group(2))
-        end = int(is_between_and.group(3))
-        
-        if parm not in item.keys():
-            print("Error parm!")
-            return False
-        
-        if int(item[parm]) <= end and int(item[parm]) > begin:
-            return True
-        else:
-            return False
-        
-    if is_single_condition:
-        left = is_single_condition.group(1).strip()
-        right = is_single_condition.group(3).strip()
-        operator = is_single_condition.group(2).strip()
- 
-        if left not in item.keys():
-            print("Error parm!")
-            return False
-        
-        if operator == "=" and item[left] == right:
-            return True
-        elif operator == ">" and item[left] > right:
-            return True
-        elif operator == "<" and item[left] < right:
-            return True
-        elif operator == ">=" and item[left] >= right:
-            return True
-        elif operator == "<=" and item[left] <= right:
-            return True
-        else:
-            return False
 
 
 def insert_into(current_database_name,table_name,values):
@@ -97,6 +33,7 @@ def insert_into(current_database_name,table_name,values):
         writer = csv.writer(csvfile,delimiter="|")
         writer.writerow(values)
 
+    print("OPERATOR SUCCESS")
     # with open(table,"r",newline="") as csvfile:
     #     reader = csv.DictReader(csvfile,delimiter="|")
     #     for row in reader:
@@ -178,6 +115,7 @@ def delete_from(current_database_name,table_name,condition):
                     continue
                 else:
                     writer.writerow(item.values())
+    print("OPERATOR SUCCESS")
 
 def update_table(current_database_name,table_name,left,right,condition):
     global data
@@ -253,6 +191,7 @@ def update_table(current_database_name,table_name,left,right,condition):
                 else:
                     pass
                 writer.writerow(item.values())
+    print("OPERATOR SUCCESS")
 
 def select_from(current_database_name,infos,table_name,condition):
     global data
@@ -321,6 +260,7 @@ def select_from(current_database_name,infos,table_name,condition):
                 print_infos(infos,item)
             else:
                 pass
+    print("OPERATOR SUCCESS")
 
 def select_from_where_limit(current_database_name,infos,table_name,condition,limit):
     global data
@@ -354,7 +294,8 @@ def select_from_where_limit(current_database_name,infos,table_name,condition,lim
             print_infos(infos,item)
         except:
             break
-    
+    print("OPERATOR SUCCESS")
+
 def select_from_where_order_by(current_database_name,infos,table_name,condition,order_key):
     global data
     table = data.joinpath(current_database_name,table_name+".csv")
@@ -372,7 +313,7 @@ def select_from_where_order_by(current_database_name,infos,table_name,condition,
     l.sort(key=order_by_key)
     for i in l:
         print_infos(infos,i)
-
+    print("OPERATOR SUCCESS")
 
 # 实现了 limit 方法
 def select_from_limit(current_database_name,infos,table_name,limit):
@@ -398,6 +339,7 @@ def select_from_limit(current_database_name,infos,table_name,limit):
                 print_infos(infos,item)
             except:
                 break
+    print("OPERATOR SUCCESS")
 
 # 实现了 order by 方法
 def select_from_order_by(current_database_name,infos,table_name,order_key):
@@ -415,6 +357,7 @@ def select_from_order_by(current_database_name,infos,table_name,order_key):
         l = sorted(reader,key=order_by_key)
     for item in l:
         print_infos(infos,item)
+    print("OPERATOR SUCCESS")
 
 def select_from_group_by(current_database_name,infos,table_name,parms):
     global data
@@ -442,6 +385,7 @@ def select_from_group_by(current_database_name,infos,table_name,parms):
     
     for i in l:
         print_infos(infos,i[0])
+    print("OPERATOR SUCCESS")
 
 def select_from_group_by_having(current_database_name,infos,table_name,parms,condition):
     global data
@@ -470,7 +414,7 @@ def select_from_group_by_having(current_database_name,infos,table_name,parms,con
     for i in l:
         if check_item_condition(i[0],condition):
             print_infos(infos,i[0])
-                    
+    print("OPERATOR SUCCESS")                
 
 
 
