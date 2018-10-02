@@ -1,0 +1,6 @@
+delect from test1 where id = 22;
+delete from test1 where id = 22;
+use hahah;
+delete from test1 where id = 22;
+delete from test1 where id = 21;
+update test1 set phone = 1000 where id = 20;

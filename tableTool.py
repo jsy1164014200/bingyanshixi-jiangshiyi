@@ -17,14 +17,14 @@ def insert_into(current_database_name,table_name,values):
     table = data.joinpath(current_database_name,table_name+".csv")
     if not table.exists():
         print("ERROR : Unknown table '%s.%s'" % (current_database_name,table_name))
-        return
+        return []
     
     with open(table,"r",newline="") as csvfile:
         reader = csv.reader(csvfile,delimiter="|")
         firstrow = next(reader)
         if len(firstrow) != len(values):
             print("ERROR : Column count doesn't match value count at row 1")
-            return
+            return []
         id = 0
         for item in reader:
             id = int(item[0])
@@ -33,19 +33,22 @@ def insert_into(current_database_name,table_name,values):
         writer = csv.writer(csvfile,delimiter="|")
         writer.writerow(values)
 
+    return_list = []
+    result = None
+    with open(table,"r",newline="") as csvfile:
+        reader = csv.reader(csvfile,delimiter="|")
+        for i in reader:
+            result = i 
+    return_list = [(table_name,i)]
     print("OPERATOR SUCCESS")
-    # with open(table,"r",newline="") as csvfile:
-    #     reader = csv.DictReader(csvfile,delimiter="|")
-    #     for row in reader:
-    #         print(row['id'])
-    #         print(row['phone'])
+    return return_list
 
 def delete_from(current_database_name,table_name,condition):
     global data
     table = data.joinpath(current_database_name,table_name+".csv")
     if not table.exists():
         print("ERROR : Unknown table '%s.%s'" % (current_database_name,table_name))
-        return
+        return []
     
     # print(condition)
     # and or between and in
@@ -53,6 +56,8 @@ def delete_from(current_database_name,table_name,condition):
     is_between_and = re.compile(r"(\w+) between (\w+) and (\w+)",re.IGNORECASE).match(condition)
     # id = 1
     is_single_condition = re.compile(r"([\w\s]+)([=<>]+)([\w\s]+)",re.IGNORECASE).match(condition)
+
+    return_list = []
 
     if is_between_and:
         parm = is_between_and.group(1)
@@ -66,7 +71,7 @@ def delete_from(current_database_name,table_name,condition):
             firstrow = next(reader)
         if parm not in firstrow:
             print("Error parm!")
-            return  
+            return return_list
 
         reader = csv.DictReader(table.open("r",newline=""),delimiter="|")
         read_list = []
@@ -79,6 +84,7 @@ def delete_from(current_database_name,table_name,condition):
             for i in read_list:
                 # print(i)
                 if int(i[parm]) <= end and int(i[parm]) > begin:
+                    return_list.append((table_name,i))
                     continue
                 writer.writerow(i.values())
 
@@ -93,7 +99,7 @@ def delete_from(current_database_name,table_name,condition):
             firstrow = next(reader)
         if left not in firstrow:
             print("Error parm!")
-            return  
+            return return_list
         
         reader = csv.DictReader(table.open("r",newline=""),delimiter="|")
         read_list = []
@@ -104,30 +110,39 @@ def delete_from(current_database_name,table_name,condition):
             writer.writerow(firstrow)
             for item in read_list:
                 if operator == "=" and item[left] == right:
+                    return_list.append((table_name,item))
                     continue
                 elif operator == ">" and item[left] > right:
+                    return_list.append((table_name,item))
                     continue
                 elif operator == "<" and item[left] < right:
+                    return_list.append((table_name,item))
                     continue
                 elif operator == ">=" and item[left] >= right:
+                    return_list.append((table_name,item))
                     continue
                 elif operator == "<=" and item[left] <= right:
+                    return_list.append((table_name,item))
                     continue
                 else:
                     writer.writerow(item.values())
+    
     print("OPERATOR SUCCESS")
+    return return_list
+
 
 def update_table(current_database_name,table_name,left,right,condition):
     global data
     table = data.joinpath(current_database_name,table_name+".csv")
     if not table.exists():
         print("ERROR : Unknown table '%s.%s'" % (current_database_name,table_name))
-        return
+        return []
 
     # id between 1 and 3
     is_between_and = re.compile(r"(\w+) between (\w+) and (\w+)",re.IGNORECASE).match(condition)
     # id = 1
     is_single_condition = re.compile(r"([\w\s]+)([=<>]+)([\w\s]+)",re.IGNORECASE).match(condition)
+    return_list = []
 
     if is_between_and:
         parm = is_between_and.group(1)
@@ -141,7 +156,7 @@ def update_table(current_database_name,table_name,left,right,condition):
             firstrow = next(reader)
         if parm not in firstrow:
             print("Error parm!")
-            return  
+            return  []
 
         reader = csv.DictReader(table.open("r",newline=""),delimiter="|")
         read_list = []
@@ -154,6 +169,7 @@ def update_table(current_database_name,table_name,left,right,condition):
             for item in read_list:
                 # print(i)
                 if int(item[parm]) <= end and int(item[parm]) > begin:
+                    return_list.append((table_name,item))
                     item[left] = right
                 writer.writerow(item.values())
 
@@ -168,7 +184,7 @@ def update_table(current_database_name,table_name,left,right,condition):
             firstrow = next(reader)
         if begin not in firstrow:
             print("Error parm!")
-            return  
+            return []
         
         reader = csv.DictReader(table.open("r",newline=""),delimiter="|")
         read_list = []
@@ -179,19 +195,26 @@ def update_table(current_database_name,table_name,left,right,condition):
             writer.writerow(firstrow)
             for item in read_list:
                 if operator == "=" and item[begin] == end:
+                    return_list.append((table_name,item))
                     item[left] = right
                 elif operator == ">" and item[begin] > end:
+                    return_list.append((table_name,item))
                     item[left] = right
                 elif operator == "<" and item[begin] < end:
+                    return_list.append((table_name,item))
                     item[left] = right
                 elif operator == ">=" and item[begin] >= end:
+                    return_list.append((table_name,item))
                     item[left] = right
                 elif operator == "<=" and item[begin] <= end:
+                    return_list.append((table_name,item))
                     item[left] = right
                 else:
                     pass
                 writer.writerow(item.values())
+                
     print("OPERATOR SUCCESS")
+    return return_list
 
 def select_from(current_database_name,infos,table_name,condition):
     global data

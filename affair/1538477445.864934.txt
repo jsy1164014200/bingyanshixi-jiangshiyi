@@ -1,0 +1,6 @@
+describe test1;
+insert into test1 values(null,1,3);
+insert into test1 values(null,1,3);
+insert into test1 values(null,1,3);
+insert into test1 values(null,1,3);
+rollback;

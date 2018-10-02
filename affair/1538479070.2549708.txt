@@ -1,0 +1,9 @@
+insert into test1 values(null,1,1);
+insert into test1 values(null,1,1);
+insert into test1 values(null,1,1);
+insert into test1 values(null,1,1);
+rollback;
+delete from test1 where id = 19
+delete from test1 where id = 19
+delete from test1 where id = 19
+delete from test1 where id = 19

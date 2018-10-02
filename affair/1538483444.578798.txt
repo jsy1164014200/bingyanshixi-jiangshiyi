@@ -1,0 +1,8 @@
+delete from test1 where id = 22;
+delete from test1 where id = 21;
+update test1 set phone = 100 where id = 20;
+rollback;
+insert into test1 values(22,1,1);
+insert into test1 values(21,1,1);
+delete from test1 where id = 20;
+insert into test1 values(20,100,1);

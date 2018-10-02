@@ -1,0 +1,7 @@
+show databases;
+sdjfk;
+sdkjf;
+sdfjkl;
+sdfkj;
+jf;
+rollback;

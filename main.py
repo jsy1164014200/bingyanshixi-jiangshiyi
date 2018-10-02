@@ -8,6 +8,8 @@ import sys
 from getpass import getpass
 from pathlib import Path
 import re
+import datetime
+import time
 import baseTool
 import tableTool
 import joinTool
@@ -19,6 +21,19 @@ base_dir = Path(__file__).cwd()
 userfile = base_dir.joinpath("user.csv")
 current_database_name = None
 
+log = base_dir.joinpath("log.txt")
+
+affair_dir = base_dir.joinpath("affair")
+current_affair_log_file = None
+# 为了实现  能够事务回滚， 需要在缓存中放两个 字典列表，存放 删除的数据，以及更改的数据
+insert_items = None
+delete_items = None
+update_items = None
+
+
+
+user = None
+
 def show_usage():
     print("Error usage!")
     print("Usage:python ./main.py -u | --user [user] -p | --password")
@@ -29,8 +44,22 @@ def show_usage():
 
 
 def handle_command(username,command):
-    
     global current_database_name
+    global log
+
+    global affair_dir
+    global current_affair_log_file
+    global insert_items
+    global delete_items
+    global update_items
+
+    with open(log,"a") as fp :
+        fp.write(str(datetime.datetime.today().year) + ":" + str(datetime.datetime.today().month) + ":" + str(datetime.datetime.today().day) + ":" + str(datetime.datetime.today().hour) + ":" + str(datetime.datetime.today().minute) + ":" +"\n")
+        fp.write(command+'\n')
+    
+    if current_affair_log_file != None:
+        with open(current_affair_log_file,"a") as f:
+            f.write(command+'\n')
     # 审核一下权限
     infos = None
     with open(userfile,"r",newline="") as csvfile:
@@ -45,7 +74,7 @@ def handle_command(username,command):
     di = {}
     
     li = [ database_table.split(".") for database_table in database_table_list]
-    print(li)
+    # print(li)
     for i in li:
         if i[0] not in di.keys():
             di[i[0]] = []
@@ -53,7 +82,7 @@ def handle_command(username,command):
         else:
             di[i[0]].append(i[1])
 
-    print(di)
+    # print(di)
 
 
     is_create = int(infos["CREATE"])
@@ -110,6 +139,38 @@ def handle_command(username,command):
         is_wgo = is_grant_privilege_on_user_host_password_is.group(6).strip()
         privilege.handle(chmod,d_t,user,host,pw,is_wgo)
         return
+
+
+    # 进行事务操作
+    is_begin = re.compile(r"begin;",re.IGNORECASE).match(command)
+    is_commit = re.compile(r"commit;",re.IGNORECASE).match(command)
+    is_rollback = re.compile(r"rollback;",re.IGNORECASE).match(command)
+
+    if is_begin:
+        hash_code = str(time.time())+".txt"
+        current_affair_log_file = affair_dir.joinpath(hash_code)
+        insert_items = []
+        delete_items = []
+        update_items = []
+        return
+
+    if is_commit:
+        current_affair_log_file = None
+        insert_items = None
+        delete_items = None
+        update_items = None
+        return
+    
+    if is_rollback and current_affair_log_file != None:
+        rollback(current_affair_log_file)
+        current_affair_log_file = None
+        insert_items = None
+        delete_items = None
+        update_items = None
+        return
+
+
+
 
     # 加入权限信息
     # CREATE DATABASE database-name 实现创建一个数据库的功能  
@@ -201,7 +262,10 @@ def handle_command(username,command):
         table_name = is_insert_into.group(1)
         values = is_insert_into.group(2).split(",")
         if table_name in di.get(current_database_name,[]) or "*" in (di.get(current_database_name,[]) or di.get("*",[])):
-            tableTool.insert_into(current_database_name,table_name,values)
+            l = tableTool.insert_into(current_database_name,table_name,values)
+            if insert_items != None:
+                for i in l:
+                    insert_items.append(i)
         else:
             print("ERROR : Access denied for user '%s' to database '%s.%s'" % (username,current_database_name,table_name))
         
@@ -214,7 +278,10 @@ def handle_command(username,command):
         table_name = is_delete_from.group(1)
         condition = is_delete_from.group(2)
         if table_name in di.get(current_database_name,[]) or "*" in (di.get(current_database_name,[]) or di.get("*",[])):
-            tableTool.delete_from(current_database_name,table_name,condition)
+            l = tableTool.delete_from(current_database_name,table_name,condition)
+            if delete_items != None:
+                for i in l:
+                    delete_items.append(i)
         else:
             print("ERROR : Access denied for user '%s' to database '%s.%s'" % (username,current_database_name,table_name))
         return
@@ -228,7 +295,10 @@ def handle_command(username,command):
         right = is_update_table.group(3).strip()
         condition = is_update_table.group(4)
         if table_name in di.get(current_database_name,[]) or "*" in (di.get(current_database_name,[]) or di.get("*",[])):
-            tableTool.update_table(current_database_name,table_name,left,right,condition)
+            l = tableTool.update_table(current_database_name,table_name,left,right,condition)
+            if update_items != None:
+                for i in l:
+                    update_items.append(i)
         else:
             print("ERROR : Access denied for user '%s' to database '%s.%s'" % (username,current_database_name,table_name))
         
@@ -380,13 +450,45 @@ def handle_command(username,command):
         
         return
 
+
+
+
+
+def rollback(current_affair_log_file):
+    # print(current_affair_log_file.name) 
+    # insert into (\w+) values\(([\s\S]+)\);
+    # delete from (\w+) where ([\s\S]+);
+    # update (\w+) set ([\s\w]+)=([\s\w]+) where ([\s\S]+);
+    #
+    print(insert_items)
+    print(delete_items)
+    print(update_items)
+    for table_data in insert_items:
+        table_name,data = table_data
+        handle_command("root","delete from %s where id = %s;" % (table_name,data[0]) )
+    
+    for table_data in delete_items:
+        table_name,data = table_data
+        handle_command("root","insert into %s values(%s);" % (table_name,",".join(data.values())) )
+
+    for table_data in update_items:
+        table_name,data = table_data
+        handle_command("root","delete from %s where id = %s;" % (table_name,data["id"]) )
+        handle_command("root","insert into %s values(%s);" % (table_name,",".join(data.values())) )
+
+    
+
+
+
 def main():
     if (len(sys.argv) == 4) and (sys.argv[1] == "-u" or sys.argv[1] == "--user") and (sys.argv[3] == "-p" or sys.argv[3] == "--password"):
         username = sys.argv[2]
         password = getpass("Enter your password>>>")
 
+        
         real_username = ""
         real_password = ""
+        global user
         global userfile
         with open(userfile,"r",newline="") as csvfile:
             reader = csv.DictReader(csvfile,delimiter="|")
@@ -398,7 +500,7 @@ def main():
             if real_password != password or real_username == "":
                 print("ERROR : Access denied for user '%s'" % username)
                 return
-
+        user = real_username
         print("Welcome to the MySQL monitor.  Commands end with ; or \g.")
         while(True):
             command = input("mysql>>>")
@@ -406,7 +508,7 @@ def main():
                 command += input("    ->")
             if(command == "exit;" or command == "quit;" or command == "\q;"):
                 print("Bye")
-                break         
+                break
             handle_command(real_username,command)
 
     else:

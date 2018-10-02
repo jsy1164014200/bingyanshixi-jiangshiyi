@@ -11,8 +11,6 @@
 from pathlib import Path
 import csv
 
-def order_by_id(item):
-    return item["id"]
 
 def main():
     # base_dir = Path(__file__).cwd()
@@ -22,8 +20,14 @@ def main():
     #     reader = csv.DictReader(csvfile,delimiter="|")
     #     for row in reader:
     #         print(row)
-    l = [{"id":1,"name":"jsy"},{"id":10,"name":"haha"},{"id":3,"name":"asd"}]
-    l.sort(key=order_by_id)
-    print(l)
+    base_dir = Path(__file__).cwd()
+    log = base_dir.joinpath("log.txt")
+    with open(log,"a") as fp :
+        fp.write("dslkf\n")
+        fp.write("Dfkjk\n")
+        fp.write("Dfkjk\n")
+
+
+
 if __name__ == "__main__":
     main()
