@@ -7,6 +7,8 @@ from pathlib import Path
 import csv
 import re
 from common import print_infos,check_item_condition
+import cross_platform_lock # 加入自定义的 跨平台 文件锁，实现共享锁，排它锁
+
 
 base_dir = Path(__file__).cwd()
 data = base_dir.joinpath("data")

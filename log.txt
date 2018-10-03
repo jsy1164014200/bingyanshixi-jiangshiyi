@@ -332,3 +332,67 @@ insert into test1 values(21,1,1);
 delete from test1 where id = 20;
 2018:10:2:20:31:
 insert into test1 values(20,100,1);
+Thread-1 ksdfjk
+Thread-1 ksdfjk
+Thread-2 ksdfjk
+Thread-2 ksdfjk
+Thread-3 ksdfjk
+Thread-3 ksdfjk
+Thread-4 ksdfjk
+Thread-4 ksdfjk
+Thread-5 ksdfjk
+Thread-5 ksdfjk
+2018:10:3:11:4:
+show databses;
+2018:10:3:11:4:
+show databases;
+2018:10:3:11:9:
+haha;
+2018:10:3:11:9:
+kdjfk;
+2018:10:3:11:9:
+skdfj;
+2018:10:3:11:9:
+dsfkjk;
+2018:10:3:11:9:
+skdfj;
+2018:10:3:11:9:
+print(dkgjsf);lgksd;
+2018:10:3:11:9:
+cls;
+2018:10:3:13:11:
+dskfj;
+2018:10:3:13:22:
+show databases;
+2018:10:3:13:23:
+sdkfj;
+2018:10:3:13:24:
+dkfsdkfjsdkjfksdjf;
+2018:10:3:13:24:
+use hahah;
+2018:10:3:13:24:
+show tables;
+2018:10:3:13:24:
+select * from test1 where id =1;
+2018:10:3:13:33:
+skdjsdkjf;
+2018:10:3:13:33:
+show database;
+2018:10:3:13:34:
+show databases;
+2018:10:3:13:53:
+show databases;
+2018:10:3:13:53:
+show databases;
+2018:10:3:14:7:
+show databases;
+2018:10:3:14:7:
+use hahah;
+2018:10:3:14:7:
+show tables;
+2018:10:3:14:7:
+select * from test1 where id =20;
+2018:10:3:14:8:
+select * from test1 where id =10;
+2018:10:3:14:8:
+hahahahhahahaha;
