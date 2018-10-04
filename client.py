@@ -6,7 +6,7 @@ def usage():
     print("USAGE: python client.py -h|--host host -p|--port port")
     print("EXAMPLE: python client.py -h 127.0.0.1 -p 3300")
 
-def main():
+def main(): 
     if len(sys.argv) == 5 and (sys.argv[1] == "-h" or sys.argv[1] == "--host") and (sys.argv[3] == "-p" or sys.argv[3] == "--port"):
         host = sys.argv[2]
         port = int(sys.argv[4])

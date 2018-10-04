@@ -14,6 +14,19 @@ base_dir = Path(__file__).cwd()
 data = base_dir.joinpath("data")
 
 
+def apply_database_table(database_name,table_name,content):
+    global data
+    table = data.joinpath(database_name,table_name+".csv")
+    if not table.exists():
+        print("ERROR : Unknown table '%s.%s'" % (current_database_name,table_name))
+        return
+    
+    with open(table,"w") as fp:
+        fp.write(content)
+
+    print("OPERATOR SUCCESS")
+
+
 def insert_into(current_database_name,table_name,values):
     global data
     table = data.joinpath(current_database_name,table_name+".csv")
@@ -217,6 +230,24 @@ def update_table(current_database_name,table_name,left,right,condition):
                 
     print("OPERATOR SUCCESS")
     return return_list
+
+
+def select_from_no_condition(current_database_name,table_name):
+    global data
+    table = data.joinpath(current_database_name,table_name+".csv")
+    if not table.exists():
+        print("ERROR : Unknown table '%s.%s'" % (current_database_name,table_name))
+        return
+
+    with open(table,"r",newline="") as csvfile:
+        reader = csv.DictReader(csvfile,delimiter="|")
+        test = next(reader)
+        print(",".join(test.keys()))
+        print(",".join(test.values()))
+        for item in reader:
+            print(",".join(item.values()))
+
+    print("OPERATOR SUCCESS")
 
 def select_from(current_database_name,infos,table_name,condition):
     global data

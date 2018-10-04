@@ -115,6 +115,8 @@ def handle_command(username,command):
     is_insert_into = re.compile(r"insert into (\w+) values\(([\s\S]+)\);",re.IGNORECASE).match(command)
     is_delete_from = re.compile(r"delete from (\w+) where ([\s\S]+);",re.IGNORECASE).match(command)
     is_update_table = re.compile(r"update (\w+) set ([\s\w]+)=([\s\w]+) where ([\s\S]+);",re.IGNORECASE).match(command)
+
+    is_select_from_no_condition = re.compile(r"select \* from (\w+);",re.IGNORECASE).match(command)
     is_select_from = re.compile(r"select ([\s\S]+) from (\w+) where ([\s\S]+);",re.IGNORECASE).match(command)
     is_select_from_limit = re.compile(r"select ([\s\S]+) from (\w+) limit ([\s\S]+);",re.IGNORECASE).match(command)
     is_select_from_order_by = re.compile(r"select ([\s\S]+) from (\w+) order by (\w+);",re.IGNORECASE).match(command)
@@ -126,6 +128,27 @@ def handle_command(username,command):
     is_left_join = re.compile(r"select ([\s\S]+) from (\w+) left join (\w+) on ([\s\S]+);",re.IGNORECASE).match(command)
     # 右边独有的数据，加上共有的
     is_right_join = re.compile(r"select ([\s\S]+) from (\w+) right join (\w+) on ([\s\S]+);",re.IGNORECASE).match(command)
+
+
+
+
+    is_apply_database_table = re.compile(r"apply (\w+) (\w+) ([\s\S]+);",re.IGNORECASE).match(command)
+
+    if is_apply_database_table and is_update and is_delete and is_insert:
+        if current_database_name == None:
+            print("ERROR : No database selected")
+            return
+        database_name = is_apply_database_table.group(1)
+        table_name = is_apply_database_table.group(2)
+        content = is_apply_database_table.group(3)
+
+        if table_name in di.get(current_database_name,[]) or "*" in (di.get(current_database_name,[]) or di.get("*",[])):
+            tableTool.apply_database_table(database_name,table_name,content)
+        else:
+            print("ERROR : Access denied for user '%s' to database '%s.%s'" % (username,current_database_name,table_name))
+
+        return
+
 
 
 
@@ -306,6 +329,19 @@ def handle_command(username,command):
             print("ERROR : Access denied for user '%s' to database '%s.%s'" % (username,current_database_name,table_name))
         
         return
+    
+    if is_select_from_no_condition and is_select:
+        if current_database_name == None:
+            print("ERROR : No database selected")
+            return
+        table_name = is_select_from_no_condition.group(1).strip()
+        if table_name in di.get(current_database_name,[]) or "*" in (di.get(current_database_name,[]) or di.get("*",[])):
+            tableTool.select_from_no_condition(current_database_name,table_name)
+        else:
+            print("ERROR : Access denied for user '%s' to database '%s.%s'" % (username,current_database_name,table_name))
+        
+        return
+        
     # select ([\s\S]+) from (\w+) where ([\s\S]+);
     if is_select_from and is_select:
         if current_database_name == None:
@@ -487,7 +523,7 @@ def rollback(current_affair_log_file):
 def main(client_socket,remote_host,remote_port):
     client_socket.send("input your username>>>".encode("utf-8"))
     username = client_socket.recv(4096).decode("utf-8")
-    client_socket.send("input your username>>>".encode("utf-8"))
+    client_socket.send("input your password>>>".encode("utf-8"))
     password = client_socket.recv(4096).decode("utf-8")
 
 
@@ -551,17 +587,19 @@ def server_loop(local_host,local_port):
         print("[!!]Check for other listening sockets or correct permissions.")
         sys.exit(0)
     
-    server_socket.listen(10)
-    print("[*]Listening on %s:%d" % (local_host,local_port))
-    while True:
-        client_socket,addr = server_socket.accept()
-        # 打印出本地的连接信息
-        print("[==>]Received incoming connection from %s:%d" % (addr[0],addr[1]))
-        # 开启一个线程与远程主机进行通讯
+    try:
+        server_socket.listen(10)
+        print("[*]Listening on %s:%d" % (local_host,local_port))
+        while True:
+            client_socket,addr = server_socket.accept()
+            # 打印出本地的连接信息
+            print("[==>]Received incoming connection from %s:%d" % (addr[0],addr[1]))
+            # 开启一个线程与远程主机进行通讯
 
-        proxy_thread = threading.Thread(target=main,args=(client_socket,addr[0],addr[1]))
-        proxy_thread.start()
-
+            proxy_thread = threading.Thread(target=main,args=(client_socket,addr[0],addr[1]))
+            proxy_thread.start()
+    except:
+        pass
 
 def show_server_usage():
     print("Error usage!")
