@@ -1,0 +1,7 @@
+delete from test1 where id = 1;
+uptate test1 set phone = test where id = 2;
+update test1 set phone = test where id = 2;
+rollback;
+insert into test1 values(1,11434,jsy);
+delete from test1 where id = 2;
+insert into test1 values(2,test,sjsy);

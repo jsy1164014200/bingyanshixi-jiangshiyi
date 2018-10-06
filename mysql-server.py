@@ -489,7 +489,7 @@ def handle_command(username,command):
         
         return
 
-    print("ERROR SYNTAX!")
+    print("ERROR!")
 
 
 

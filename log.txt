@@ -1412,3 +1412,204 @@ apply hahah test2 id|phone|what
 4|test|test
 5|test|test
 ;
+2018:10:4:20:24:
+show databases;
+2018:10:4:20:25:
+create database test;
+2018:10:4:20:25:
+drop database test;
+2018:10:4:20:26:
+use hahah;
+2018:10:4:20:29:
+create table bar(id primary key,  text varchar(30),  name varchar(30),  phone varchar(30)  );
+2018:10:4:20:29:
+create table bar(id primary key,text varchar(30),name varchar(30),phone varchar(30));
+2018:10:4:20:32:
+alter table bar add column what varchar(30);
+2018:10:4:20:32:
+drop table bar;
+2018:10:4:20:32:
+describe hahah;
+2018:10:4:20:33:
+describe test1;
+2018:10:4:20:35:
+insert into test1 values(null,hahaha,jsy);
+2018:10:4:20:36:
+insert into test1 values(null,hahaha,jsy);
+2018:10:4:20:36:
+insert into test1 values(null,hahaha,jsy);
+2018:10:4:20:37:
+insert into test1 values(null,hahaha,jsy);
+2018:10:4:20:37:
+insert into test1 values(null,hahaha,jsy);
+2018:10:4:20:37:
+insert into test1 values(null,hahaha,jsy);
+2018:10:4:20:37:
+insert into test1 values(null,hahaha,jsy);
+2018:10:4:20:37:
+insert into test1 values(null,hahaha,jsy);
+2018:10:4:20:37:
+insert into test1 values(null,hahaha,jsy);
+2018:10:4:20:37:
+insert into test1 values(null,hahaha,jsy);
+2018:10:4:20:37:
+insert into test1 values(null,hahaha,jsy);
+2018:10:4:20:37:
+insert into test1 values(null,hahaha,jsy);
+2018:10:4:20:37:
+insert into test1 values(null,hahaha,jsy);
+2018:10:4:20:37:
+insert into test1 values(null,hahaha,jsy);
+2018:10:4:20:37:
+insert into test1 values(null,hahaha,jsy);
+2018:10:4:20:37:
+insert into test1 values(null,hahaha,jsy);
+2018:10:4:20:37:
+insert into test1 values(null,hahaha,jsy);
+2018:10:4:20:37:
+insert into test1 values(null,hahaha,jsy);
+2018:10:4:20:37:
+insert into test1 values(null,hahaha,jsy);
+2018:10:4:20:37:
+insert into test1 values(null,hahaha,jsy);
+2018:10:4:20:37:
+insert into test1 values(null,hahaha,jsy);
+2018:10:4:20:38:
+delete from test1 where id > 20;
+2018:10:4:20:38:
+delete from test1 where id between 10 and 20;
+2018:10:4:20:38:
+delete from test1 where id between 10 and 20;
+2018:10:4:20:40:
+update test1 set phone=2342352 where id >20;
+2018:10:4:20:40:
+update test1 set phone=3 where id between 10 and 20;
+2018:10:4:20:42:
+select * from test1;
+2018:10:4:20:42:
+select * from test1 where id = 1;
+2018:10:4:20:42:
+select id,phone from test1 where id = 1;
+2018:10:4:20:42:
+select id,phone from test1 where id >20;
+2018:10:4:20:43:
+select id,phone from test1 where id >20;
+2018:10:4:20:43:
+select * from test1 where id > 20;
+2018:10:4:20:43:
+select * from test1 where id < 20;
+2018:10:4:20:44:
+select id,phone from test1 where id <5;
+2018:10:4:20:44:
+select id,phone from test1 where id between 10 and 20;
+2018:10:4:20:46:
+select id,phone from test1 where id between 10 and 20 limit 5;
+2018:10:4:20:46:
+select id,phone from test1 where id between 10 and 20 limit 2,5;
+2018:10:4:20:47:
+select * from test1 limit 3;
+2018:10:4:20:48:
+select * from test1 where id > 20 order by phone;
+2018:10:4:20:48:
+select * from test1 where id between 10 and 20 order by phone;
+2018:10:4:20:49:
+select * from test1 where id between 10 and 20 order by phone;
+2018:10:4:20:49:
+select * from test1 order by phone;
+2018:10:4:20:52:
+select tes1.id,test1.phone,test1.what,test2.what from test1 left join test2 on test1.id = test2.id;
+2018:10:4:20:52:
+select tes1.id,test1.phone,test1.what,test2.what from test1 inner join test2 on test1.id = test2.id;
+2018:10:4:20:53:
+select tes1.id,test1.phone,test1.what,test2.what from test1 right join test2 on test1.id = test2.id;
+2018:10:4:20:56:
+show databases;
+2018:10:4:20:56:
+use hahah;
+2018:10:4:20:57:
+select * from test1 group by phone;
+2018:10:4:20:57:
+select * from test1 group by phone having id > 10;
+2018:10:4:20:57:
+select * from test1 group by phone having id between 10 and 20;
+2018:10:4:21:1:
+grant insert,select on hahah.test1 to 'testroot'@'%' identified by '123456';
+2018:10:4:21:1:
+show databases;
+2018:10:4:21:1:
+use foo;
+2018:10:4:21:2:
+use hahah;
+2018:10:4:21:2:
+select * from test1;
+2018:10:4:21:3:
+delete from test1 where id = 1;
+2018:10:4:21:3:
+delete from test1 where id = 1;
+2018:10:4:21:3:
+delete from test1 where id=1;
+2018:10:4:21:4:
+update test1 set phone=23432523532 where id = 10;
+2018:10:4:21:5:
+insert into test1 values(null,sdf,2dsf);
+2018:10:4:21:8:
+grant all on *.* to 'testroot'@'%' identified by '123' with grant option;
+2018:10:4:21:13:
+use hahah;
+2018:10:4:21:13:
+use hahah;
+2018:10:4:21:14:
+show databases;
+2018:10:4:21:14:
+begin;
+2018:10:4:21:14:
+delete from test1 where id = 1;
+2018:10:4:21:14:
+uptate test1 set phone = test where id = 2;
+2018:10:4:21:14:
+update test1 set phone = test where id = 2;
+2018:10:4:21:14:
+rollback;
+2018:10:4:21:14:
+insert into test1 values(1,11434,jsy);
+2018:10:4:21:14:
+delete from test1 where id = 2;
+2018:10:4:21:14:
+insert into test1 values(2,test,sjsy);
+2018:10:4:21:16:
+show databases;
+2018:10:4:21:17:
+use hahah;
+2018:10:4:21:17:
+show tables;
+2018:10:4:21:17:
+select * from test1;
+2018:10:4:21:17:
+select * from test2;
+2018:10:4:21:17:
+select * from test3;
+2018:10:4:21:17:
+select * from test2;
+2018:10:4:21:17:
+select * from test3;
+2018:10:4:21:17:
+apply hahah test3 id|name
+2|sdfsdf
+3|sdgdasgdasgasd
+;
+2018:10:6:22:38:
+show databases;
+2018:10:6:22:39:
+show databases;
+2018:10:6:22:39:
+use hahah;
+2018:10:6:22:39:
+show tables;
+2018:10:6:22:39:
+select * from test1;
+2018:10:6:22:39:
+select * from test2;
+2018:10:6:22:39:
+select * from test3;
+2018:10:6:22:39:
+select * from test2;
